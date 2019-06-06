@@ -1,13 +1,19 @@
 {
   "scripts": {
-    "test": "nyc --all mocha",
+    "test": "mocha",
     "build": "npm prune",
     "lint": "eslint .",
-    "precoverage": "npm test",
+    "precoverage": "nyc --all npm test",
     "coverage": "nyc check-coverage",
+    "mutation": "stryker run",
     "scan": "npm audit"
   },
   "devDependencies": {
+    "@stryker-mutator/core": "^2.0.0",
+    "@stryker-mutator/html-reporter": "^2.0.0",
+    "@stryker-mutator/javascript-mutator": "^2.0.0",
+    "@stryker-mutator/mocha-framework": "^2.0.0",
+    "@stryker-mutator/mocha-runner": "^2.0.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "eslint": "^5.12.0",

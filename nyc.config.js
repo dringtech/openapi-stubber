@@ -4,16 +4,17 @@ module.exports = {
   'functions': 90,
   'branches': 90,
   'exclude': [
-    'report/',
+    'reports/',
     'node_modules/',
     'test/',
     '.*.js',
     'nyc.config.js',
+    '.stryker-tmp/',
   ],
   'reporter': [
     'lcov',
     'cobertura',
     'text-summary',
   ],
-  'report-dir': 'report/coverage',
+  'report-dir': 'reports',
 };

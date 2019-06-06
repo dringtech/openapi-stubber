@@ -1,3 +1,5 @@
 /node_modules/
-/report/
+/reports/
 /.nyc_output/
+/.stryker-tmp/
+/stryker.log
