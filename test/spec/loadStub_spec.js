@@ -4,7 +4,7 @@ const chai = require('chai');
 
 const { expect } = chai;
 
-describe('lib/loadStub', () => {
+describe('lib.loadStub', () => {
   let fakeStartStub, loadStub;
 
   const fakeSpec = {};
