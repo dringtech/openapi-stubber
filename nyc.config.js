@@ -3,13 +3,8 @@ module.exports = {
   'statements': 90,
   'functions': 90,
   'branches': 90,
-  'exclude': [
-    'reports/',
-    'node_modules/',
-    'test/',
-    '.*.js',
-    'nyc.config.js',
-    '.stryker-tmp/',
+  'include': [
+    'lib/',
   ],
   'reporter': [
     'lcov',
