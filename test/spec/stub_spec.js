@@ -5,7 +5,7 @@ const proxyquire = require('proxyquire');
 const { expect } = chai;
 
 describe('lib/stub', () => {
-  let stub, fakeValidate, fakeExpress, fakeUse, fakeListen, options;
+  let stub, fakeGetMiddleware, fakeExpress, fakeUse, fakeListen, options, fakeMiddleware;
 
   beforeEach(() => {
     options = {
@@ -13,9 +13,10 @@ describe('lib/stub', () => {
       spec: 'VALID',
       port: 8080,
     };
-    fakeValidate = sinon.fake(spec => {
-      if (spec === 'VALID') return true;
-      return false;
+    fakeMiddleware = (req, res, next) => next();
+    fakeGetMiddleware = sinon.fake(async spec => {
+      if (spec === 'INVALID') throw new Error('FAKE GET MIDDLEWARE ERROR');
+      return fakeMiddleware;
     });
     fakeUse = sinon.fake();
     fakeListen = sinon.fake.returns('STUB SERVER');
@@ -25,7 +26,7 @@ describe('lib/stub', () => {
     });
     stub = proxyquire('../../lib/stub', {
       'express': fakeExpress,
-      './openApi': { validate: fakeValidate },
+      './openApi': { getMiddleware: fakeGetMiddleware },
     });
   });
 
@@ -34,37 +35,34 @@ describe('lib/stub', () => {
     return Promise.all([
       expect(fakeExpress).to.have.been.called,
       expect(fakeUse).to.have.been.called,
+      expect(fakeUse).to.have.been.calledWith(fakeMiddleware),
+      expect(fakeGetMiddleware).to.have.been.called,
       expect(fakeListen).to.have.been.calledWith(8080),
       expect(stubServer).to.equal('STUB SERVER'),
     ]);
   });
 
-  it('should throw if options not provided', async () => {
-    const test = () => stub();
-    return expect(test).to.throw();
-  })
+  it('should be rejected if options not provided', () => {
+    return expect(stub()).to.be.rejected;
+  });
 
-  it('should throw if name not provided', async () => {
+  it('should throw if name not provided', () => {
     delete options.name;
-    const test = () => stub(options);
-    return expect(test).to.throw('Stub name must be provided');
+    return expect(stub(options)).to.be.rejectedWith('Stub name must be provided');
   });
 
   it('should throw if openapi spec not provided', async () => {
     delete options.spec;
-    const test = () => stub(options);
-    return expect(test).to.throw('OpenApi spec must be provided');
+    return expect(stub(options)).to.be.rejectedWith('OpenApi spec must be provided');
   });
 
   it('should throw if port not provided', async () => {
     delete options.port;
-    const test = () => stub(options);
-    return expect(test).to.throw('Port must be provided');
+    return expect(stub(options)).to.be.rejectedWith('Port must be provided');
   });
 
-  it('should throw if openapi spec not valid', async () => {
+  it('should throw exceptions from openApi#getMiddleware', async () => {
     options.spec = 'INVALID';
-    const test = () => stub(options);
-    return expect(test).to.throw('Invalid OpenAPI spec provided');
+    return expect(stub(options)).to.be.rejectedWith('FAKE GET MIDDLEWARE ERROR');
   });
 });
