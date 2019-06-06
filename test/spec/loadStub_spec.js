@@ -7,7 +7,7 @@ const { expect } = chai;
 describe('lib.loadStub', () => {
   let fakeStartStub, loadStub;
 
-  const fakeSpec = {};
+  const fakeOptions = { fake: 'Options' };
 
   beforeEach(() => {
     fakeStartStub = sinon.fake();
@@ -16,7 +16,7 @@ describe('lib.loadStub', () => {
   });
 
   it('should start a stub', () => {
-    loadStub('NAME', fakeSpec);
-    return expect(fakeStartStub).to.have.been.calledWith('NAME', fakeSpec);
+    loadStub(fakeOptions);
+    return expect(fakeStartStub).to.have.been.calledWith(fakeOptions);
   });
 });
