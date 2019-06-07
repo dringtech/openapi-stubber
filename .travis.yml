@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+- lts/*
+- node
+jobs:
+  include:
+  - script: npm run-script lint
+  - script: npm test
+  - script: npm run-script coverage
+  - script: npm audit
+deploy:
+  provider: npm
+  email: giles@dringtech.com
+  api_key:
+    secure: BRJF2Zg2ZC2oYyKCF8YOlHN8YNDf+VEClqkyxt8J8lW+WULlmXPKGl996MrZhxpxz5DMLxkaNC6ZGfDphbEsCeXbDIz4BAUbqkqubEapApdhBqweo0BuICyKjWJ9T//liUghw7yIzAG4P5z8JyBGQsgaShSrKPKa8w98JMj4gUbml9waOx6gyhL7kayFbtzBBXGDch4I+weZFm/K/xPMz0LbSxY+LnBeIMxnGnsampgAymwPvasNWba4WTnGmE6BH7taojyYaVwrTnqqB7TcQ/h4MV67z+5In4Sqv5Pd8YRwU1Q5FEK4hPa0365yo514er+MCeHC82lry1uS5bx3nAhaqH8cYccPgEo+xFv/woH5cRRHbbjqtOYHlBYWFZ1dnBHioXPS04wJZ1kknhR0LJMnC0rYxI1LHUFBrptXPVdR0ulXqc4lMGOT1CWO4Sgh/v2EiAAziX8XKuuVqk1HX+bvsb2Yf5pkOmLXSicwWVpSLTfM6aVKT+nbLXDC1tSuvzcnj6/Kzf1BtRO52Y06IhLAz1avzsVMcwzNnR0JJ8Um3UWEAvXaFIp1mV2LUUHkZRaQnU5GqUIrc6DJBjXIQ1se+ZDDB+DQzd7fb7a23YeSiORFuTVN4E9EWTX5IFt3nJUDqXkaJ6v5ctRL7BBiREz7DxFGpPEun0pQDNrkEK8=
+  on:
+    tags: true
+    repo: dringtech/openapi-stubber
