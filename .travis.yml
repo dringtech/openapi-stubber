@@ -6,6 +6,7 @@ jobs:
   include:
   - script: npm run-script lint
   - script: npm test
+  - script: npm run-script mutation
   - script: npm run-script coverage
   - script: npm audit
 deploy:
