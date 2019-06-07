@@ -1,5 +1,7 @@
 # openapi-stubber
 
+[![Build Status](https://travis-ci.org/dringtech/openapi-stubber.svg?branch=master)](https://travis-ci.org/dringtech/openapi-stubber)
+
 > Auto-stubbing for OpenAPI V3 specs
 
 This is a utility wrapper around [`openapi-backend`](https://www.npmjs.com/package/openapi-backend) aimed
