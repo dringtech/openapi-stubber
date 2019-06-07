@@ -1,6 +1,7 @@
 # openapi-stubber
 
 [![Build Status](https://travis-ci.org/dringtech/openapi-stubber.svg?branch=master)](https://travis-ci.org/dringtech/openapi-stubber)
+[![Mutation testing badge](https://badge.stryker-mutator.io/github.com/dringtech/openapi-stubber/master)](https://stryker-mutator.github.io)
 
 > Auto-stubbing for OpenAPI V3 specs
 
