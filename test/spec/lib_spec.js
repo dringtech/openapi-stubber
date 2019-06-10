@@ -5,14 +5,32 @@ const proxyquire = require('proxyquire');
 const { expect } = chai;
 
 describe('lib', () => {
-  it('should provide a loadStub function', () => {
-    const lib = require('../../lib');
-    expect(lib).to.have.property('loadStub').which.is.a('function');
+  [ 'loadStub', 'tearDown', 'setupLogging' ].forEach((functionName) => {
+    it(`should provide a ${functionName} function`, () => {
+      const lib = require('../../lib');
+      expect(lib).to.have.property(functionName).which.is.a('function');
+    });
   });
 
-  it('should provide a tearDown function', () => {
-    const lib = require('../../lib');
-    expect(lib).to.have.property('tearDown').which.is.a('function');
+  describe('#setupLogging', () => {
+    let fakeLoggerSetup, setupLogging;
+
+    beforeEach(() => {
+      fakeLoggerSetup = sinon.fake();
+      const lib = proxyquire('../../lib', { './logger': { setupLogger: fakeLoggerSetup } });
+      ({ setupLogging } = lib);
+    });
+
+    it('should setup the logger if a logFile is set', () => {
+      setupLogging({ logFile: 'LOGFILE_NAME' });
+      expect(fakeLoggerSetup).to.have.been.calledWithMatch({ filename: 'LOGFILE_NAME' });
+    });
+
+    it('should not setup the logger if logFile not set', () => {
+      setupLogging();
+      // eslint-disable-next-line no-unused-expressions
+      expect(fakeLoggerSetup).to.not.have.been.called;
+    });
   });
 
   describe('#loadStub', () => {
