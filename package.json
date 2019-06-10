@@ -1,6 +1,6 @@
 {
   "name": "@dringtech/openapi-stubber",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Auto-stubbing for OpenAPI V3 APIs",
   "license": "ISC",
   "main": "lib",
