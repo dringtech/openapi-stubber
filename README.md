@@ -37,3 +37,11 @@ Once the tests (or whatever) are completed call the following code to clean up:
 ```js
 await stubber.tearDown();
 ```
+
+### Logging
+
+If you want to log the stub output, call the following before any stubs are loaded:
+
+```js
+stubber.setupLogging({ logFile: '/path/to/log/file.log' });
+```
