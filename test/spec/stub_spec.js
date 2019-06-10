@@ -5,7 +5,7 @@ const proxyquire = require('proxyquire');
 const { expect } = chai;
 
 describe('lib/stub', () => {
-  let stub, fakeGetMiddleware, fakeExpress, fakeUse, fakeListen, options, fakeMiddleware;
+  let stub, fakeGetMiddleware, fakeExpress, fakeUse, fakeListen, options, fakeMiddleware, fakeGetLogger;
 
   beforeEach(() => {
     options = {
@@ -13,6 +13,13 @@ describe('lib/stub', () => {
       spec: 'VALID',
       port: 8080,
     };
+    fakeGetLogger = sinon.fake((name) => {
+      if (name === 'NOT_INITED') throw new Error('Logger not inialised - call setupLogger');
+      return {
+        requestLogger: 'FAKED REQUEST LOGGER',
+        errorLogger: 'FAKED ERROR LOGGER',
+      };
+    });
     fakeMiddleware = (req, res, next) => next();
     fakeGetMiddleware = sinon.fake(async spec => {
       if (spec === 'INVALID') throw new Error('FAKE GET MIDDLEWARE ERROR');
@@ -27,6 +34,7 @@ describe('lib/stub', () => {
     stub = proxyquire('../../lib/stub', {
       'express': fakeExpress,
       './openApi': { getMiddleware: fakeGetMiddleware },
+      './logger': { getLogger: fakeGetLogger, '@noCallThru': true },
     });
   });
 
@@ -59,6 +67,20 @@ describe('lib/stub', () => {
   it('should throw if port not provided', async () => {
     delete options.port;
     return expect(stub(options)).to.be.rejectedWith('Port must be provided');
+  });
+
+  it('should instantiate a logger if the logger is setup', async () => {
+    await stub(options);
+    expect(fakeGetLogger).to.have.been.calledWith('NAME');
+    expect(fakeUse).to.have.been.calledWith('FAKED REQUEST LOGGER');
+    return expect(fakeUse).to.have.been.calledWith('FAKED ERROR LOGGER');
+  });
+
+  it('should not instantiate a logger if the logger is not setup', async () => {
+    options.name = 'NOT_INITED';
+    await stub(options);
+    expect(fakeUse).to.have.not.been.calledWith('FAKED REQUEST LOGGER');
+    return expect(fakeUse).to.have.not.been.calledWith('FAKED ERROR LOGGER');
   });
 
   it('should throw exceptions from openApi#getMiddleware', async () => {
