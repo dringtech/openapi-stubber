@@ -61,13 +61,13 @@ describe('lib', () => {
 
   describe('#tearDown', () => {
     it('should remove the running stubs', async () => {
-      const fakeStop = sinon.fake.resolves();
-      const fakeStartStub = async () => ({ stop: fakeStop });
+      const fakeClose = sinon.fake.resolves();
+      const fakeStartStub = async () => ({ close: fakeClose });
       const lib = proxyquire('../../lib', { './stub': fakeStartStub });
       await lib.loadStub({});
       await lib.loadStub({});
       await lib.tearDown();
-      return expect(fakeStop).to.have.been.called.and.to.have.callCount(2);
+      return expect(fakeClose).to.have.been.called.and.to.have.callCount(2);
     });
   });
 });
