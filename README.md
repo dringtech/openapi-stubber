@@ -24,13 +24,24 @@ Load the required stubs before running tests (or whenever).
 ```js
 const stubber = require('@dringtech/openapi-stubber');
 
-await stubber.loadStub({ name: 'Stub Name', spec: SPEC_DEF, port: 8000 });
+await stubber.loadStub({ name: 'Stub Name', spec: SPEC_DEF, port: 8000, overrides: OVERRIDES });
 ```
 
 The spec (`SPEC_DEF`) can be anything that `openapi-backend` understands, primarily:
 
 * Path to an OpenAPI V3 file
 * An OpenAPI spec object
+
+It is also possible to pass an _optional_ `overrides` property to the `loadStub` call. This allows 
+control over the example returned in response to a given path. The format is
+
+```js
+{
+  '/path/to/override': 'NameOfExampleInOpenAPISpec',
+}
+```
+
+The examples must be defined in the OpenAPI Spec document.
 
 Once the tests (or whatever) are completed call the following code to clean up:
 

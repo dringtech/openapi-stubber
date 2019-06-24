@@ -32,3 +32,8 @@ paths:
             application/json:    
               schema:
                 type: string
+              examples:
+                defaultExample:
+                  value: 'The Default Example'
+                specificExample:
+                  value: 'A Specific Example'
