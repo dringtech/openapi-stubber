@@ -24,19 +24,19 @@ describe('lib/openApi', () => {
     });
 
     it('should return a middleware function', async () => {
-      const result = await getMiddleware(validSpec);
+      const result = await getMiddleware({ spec: validSpec });
       return Promise.all([
         expect(result).to.be.a('function'),
       ]);
     });
 
     it('should be rejected if the document cannot be found', () => {
-      return expect(getMiddleware(notFoundSpec))
+      return expect(getMiddleware({ spec: notFoundSpec }))
         .to.be.rejectedWith('ENOENT: no such file or directory, open');
     });
 
     it('should be rejected if the document is not valid OpenAPI v3', () => {
-      return expect(getMiddleware(invalidSpec))
+      return expect(getMiddleware({ spec: invalidSpec }))
         .to.be.rejectedWith(/^Document is not valid OpenAPI. \d+ validation errors$/);
     });
   });

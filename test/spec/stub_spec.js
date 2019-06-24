@@ -27,8 +27,8 @@ describe('lib/stub', () => {
       };
     });
     fakeMiddleware = (req, res, next) => next();
-    fakeGetMiddleware = sinon.fake(async (spec) => {
-      if (spec === 'INVALID') throw new Error('FAKE GET MIDDLEWARE ERROR');
+    fakeGetMiddleware = sinon.fake(async (options) => {
+      if (options.spec === 'INVALID') throw new Error('FAKE GET MIDDLEWARE ERROR');
       return fakeMiddleware;
     });
     fakeUse = sinon.fake();

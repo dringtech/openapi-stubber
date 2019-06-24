@@ -13,7 +13,7 @@ describe('middleware operation', () => {
     const openApi = require('../../lib/openApi');
     fakeJson = sinon.fake();
     res = { status: sinon.fake.returns({ json: fakeJson }) };
-    stubMiddleware = await openApi.getMiddleware(stubSpec);
+    stubMiddleware = await openApi.getMiddleware({ spec: stubSpec });
   });
 
   it('should respond with a mock response', async () => {
