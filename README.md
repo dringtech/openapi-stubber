@@ -43,6 +43,10 @@ control over the example returned in response to a given path. The format is
 
 The examples must be defined in the OpenAPI Spec document.
 
+Additional stack handling (e.g. setting headers) can be performed by passing in a `stack` property
+to the options. This must be a valid express middleware stack definition: either a single function
+with the signature `(req, res, next)`, or an array of such functions.
+
 Once the tests (or whatever) are completed call the following code to clean up:
 
 ```js

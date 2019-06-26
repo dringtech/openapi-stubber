@@ -123,4 +123,17 @@ describe('lib/stub', () => {
     expect(fakeInfoLogger).to.have.not.been.called;
     return expect(fakeErrorLogger).to.have.not.been.called;
   });
+
+  it('should not inject an undefined stack', async () => {
+    await stub(options);
+
+    return expect(fakeUse).to.not.have.been.calledWith(undefined);
+  });
+
+  it('should be able to inject additional stack handling', async () => {
+    options.stack = 'FAKE_EXPRESS_STACK';
+    await stub(options);
+
+    return expect(fakeUse).to.have.been.calledWith('FAKE_EXPRESS_STACK');
+  });
 });
