@@ -136,4 +136,18 @@ describe('lib/stub', () => {
 
     return expect(fakeUse).to.have.been.calledWith('FAKE_EXPRESS_STACK');
   });
+
+  it('should be default the overrides to an empty object', async () => {
+    delete options.overrides;
+    await stub(options);
+
+    return expect(fakeGetMiddleware).to.have.been.calledWith(sinon.match.has('overrides', {}));
+  });
+
+  it('should be possible to provide example overrides by route', async () => {
+    options.overrides = 'FAKE_OVERRIDES';
+    await stub(options);
+
+    return expect(fakeGetMiddleware).to.have.been.calledWith(sinon.match.has('overrides', 'FAKE_OVERRIDES'));
+  });
 });
