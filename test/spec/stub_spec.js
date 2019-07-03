@@ -150,4 +150,18 @@ describe('lib/stub', () => {
 
     return expect(fakeGetMiddleware).to.have.been.calledWith(sinon.match.has('overrides', 'FAKE_OVERRIDES'));
   });
+
+  it('should default the validateRequest flag to true', async () => {
+    delete options.validateRequests;
+    await stub(options);
+
+    return expect(fakeGetMiddleware).to.have.been.calledWith(sinon.match.has('validateRequests', true));
+  });
+
+  it('should be possible to set the validateRequest flag', async () => {
+    options.validateRequests = false;
+    await stub(options);
+
+    return expect(fakeGetMiddleware).to.have.been.calledWith(sinon.match.has('validateRequests', false));
+  });
 });

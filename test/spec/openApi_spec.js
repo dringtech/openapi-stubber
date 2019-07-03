@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-expressions */
 const path = require('path');
 const chai = require('chai');
+const rewire = require('rewire');
+const sinon = require('sinon');
 const { expect } = chai;
 
 const fixturePath = (f) => path.resolve(__dirname, '../fixtures/', f);
@@ -38,6 +40,34 @@ describe('lib/openApi', () => {
     it('should be rejected if the document is not valid OpenAPI v3', () => {
       return expect(getMiddleware({ spec: invalidSpec }))
         .to.be.rejectedWith(/^Document is not valid OpenAPI. \d+ validation errors$/);
+    });
+
+    describe('option handling', () => {
+      const options = { spec: validSpec };
+      let canary;
+
+      beforeEach(() => {
+        const openApi = rewire('../../lib/openApi');
+        canary = sinon.fake();
+        class fakeOpenAPIBackend {
+          constructor(opts) { canary(opts); }
+          async init() {}
+        }
+        openApi.__set__({ 'OpenAPIBackend': fakeOpenAPIBackend });
+        ({ getMiddleware } = openApi);
+      });
+
+      it('should default request validation to true', async () => {
+        delete options.validateRequests;
+        await getMiddleware(options);
+        return expect(canary).to.have.been.calledWith(sinon.match.has('validate', true));
+      });
+
+      it('should be possible to override request validation', async () => {
+        options.validateRequests = false;
+        await getMiddleware(options);
+        return expect(canary).to.have.been.calledWith(sinon.match.has('validate', false));
+      });
     });
   });
 });

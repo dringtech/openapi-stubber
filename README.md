@@ -24,7 +24,13 @@ Load the required stubs before running tests (or whenever).
 ```js
 const stubber = require('@dringtech/openapi-stubber');
 
-await stubber.loadStub({ name: 'Stub Name', spec: SPEC_DEF, port: 8000, overrides: OVERRIDES });
+await stubber.loadStub({
+  name: 'Stub Name',
+  spec: SPEC_DEF,
+  port: 8000,
+  overrides: OVERRIDES,
+  validateRequests: true|false
+});
 ```
 
 The spec (`SPEC_DEF`) can be anything that `openapi-backend` understands, primarily:
@@ -46,6 +52,9 @@ The examples must be defined in the OpenAPI Spec document.
 Additional stack handling (e.g. setting headers) can be performed by passing in a `stack` property
 to the options. This must be a valid express middleware stack definition: either a single function
 with the signature `(req, res, next)`, or an array of such functions.
+
+Requests to the stub backend will be validated by default. To override this behaviour, set the
+`validateRequests` property to `false`.
 
 Once the tests (or whatever) are completed call the following code to clean up:
 
