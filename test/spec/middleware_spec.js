@@ -8,11 +8,14 @@ describe('middleware operation', () => {
   const openApi = require('../../lib/openApi');
   const stubSpec = path.resolve(__dirname, '../fixtures/', 'simple.yaml');
 
-  let stubMiddleware, fakeJson, res;
+  let stubMiddleware, res;
 
   beforeEach(async () => {
-    fakeJson = sinon.fake();
-    res = { status: sinon.fake.returns({ json: fakeJson }) };
+    res = {};
+    res.status = sinon.fake.returns(res);
+    res.json = sinon.fake.returns(res);
+    res.set = sinon.fake.returns(res);
+    res.send = sinon.fake.returns(res);
     stubMiddleware = await openApi.getMiddleware({ spec: stubSpec });
   });
 
@@ -27,7 +30,7 @@ describe('middleware operation', () => {
     await stubMiddleware(req, res);
     return Promise.all([
       expect(res.status).to.have.been.calledWith(404),
-      expect(fakeJson).to.have.been.calledWith({ err: 'not found' }),
+      expect(res.json).to.have.been.calledWith({ err: 'not found' }),
     ]);
   });
   it('should catch validation errors', async () => {
@@ -35,7 +38,7 @@ describe('middleware operation', () => {
     await stubMiddleware(req, res);
     return Promise.all([
       expect(res.status).to.have.been.calledWith(400),
-      expect(fakeJson).to.have.been.calledWith(sinon.match.hasNested('err[0].dataPath', '.path.id')),
+      expect(res.json).to.have.been.calledWith(sinon.match.hasNested('err[0].dataPath', '.path.id')),
     ]);
   });
 
@@ -45,7 +48,7 @@ describe('middleware operation', () => {
 
     return Promise.all([
       expect(res.status).to.have.been.calledWith(200),
-      expect(fakeJson).to.have.been.calledWith('The Default Example'),
+      expect(res.json).to.have.been.calledWith('The Default Example'),
     ]);
   });
   it('should be possible to select an example for a path', async () => {
@@ -55,7 +58,50 @@ describe('middleware operation', () => {
 
     return Promise.all([
       expect(res.status).to.have.been.calledWith(200),
-      expect(fakeJson).to.have.been.calledWith('A Specific Example'),
+      expect(res.json).to.have.been.calledWith('A Specific Example'),
     ]);
+  });
+
+  describe('fixtures', () => {
+    it('should be possible to override the response', async () => {
+      const fixtures = { '/test/789': { mock: 'A Fixture' } };
+      stubMiddleware = await openApi.getMiddleware({ spec: stubSpec, fixtures });
+
+      const req = { method: 'GET', path: '/test/789' };
+      await stubMiddleware(req, res);
+
+      return Promise.all([
+        expect(res.status).to.have.been.calledWith(200),
+        expect(res.json).to.have.been.calledWith('A Fixture'),
+      ]);
+    });
+
+    it('should be possible to set a specific content type', async () => {
+      const fixtures = { '/test/789': { mock: 'A Fixture', contentType: 'text/plain' } };
+      stubMiddleware = await openApi.getMiddleware({ spec: stubSpec, fixtures });
+
+      const req = { method: 'GET', path: '/test/789' };
+      await stubMiddleware(req, res);
+
+      return Promise.all([
+        expect(res.status).to.have.been.calledWith(200),
+        expect(res.json).to.have.not.been.called,
+        expect(res.set).to.have.been.calledWith('Content-Type', 'text/plain'),
+        expect(res.send).to.have.been.calledWith('A Fixture'),
+      ]);
+    });
+
+    it('should be possible to set a override HTTP status code', async () => {
+      const fixtures = { '/test/789': { status: 204, mock: 'A Fixture' } };
+      stubMiddleware = await openApi.getMiddleware({ spec: stubSpec, fixtures });
+
+      const req = { method: 'GET', path: '/test/789' };
+      await stubMiddleware(req, res);
+
+      return Promise.all([
+        expect(res.status).to.have.been.calledWith(204),
+        expect(res.json).to.have.been.calledWith('A Fixture'),
+      ]);
+    });
   });
 });

@@ -28,7 +28,9 @@ await stubber.loadStub({
   name: 'Stub Name',
   spec: SPEC_DEF,
   port: 8000,
+  stack: STACK,
   overrides: OVERRIDES,
+  fixtures: FIXTURES,
   validateRequests: true|false
 });
 ```
@@ -52,6 +54,22 @@ The examples must be defined in the OpenAPI Spec document.
 Additional stack handling (e.g. setting headers) can be performed by passing in a `stack` property
 to the options. This must be a valid express middleware stack definition: either a single function
 with the signature `(req, res, next)`, or an array of such functions.
+
+Fixtures, over and above that supported by the OpenAPI examples, can be specified in the fixtures
+property. A full example of this is given below:
+
+```js
+{
+  '/path/to/override': {
+    status: 'HTTP STATUS CODE',
+    mock: 'DATA TO RETURN FROM CALL TO PATH',
+    contentType: 'CONTENT TYPE TO SET'
+  }
+}
+```
+
+Only the `mock` property is required. `status` defaults to 200 and `contentType` defaults to
+`application/json`.
 
 Requests to the stub backend will be validated by default. To override this behaviour, set the
 `validateRequests` property to `false`.
